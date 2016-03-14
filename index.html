@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src * 'unsafe-inline'; media-src *">
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+    <title></title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic,300' rel='stylesheet'
+          type='text/css'>
+
+
+    <!--<script src="js/easeljs-0.8.2.min.js"></script>
+    <!--<script src="js/createjs-2015.11.26.min.js"></script>-->
+
+    <script type="text/javascript" src="cordova.js"></script>
+    <script src="js/knockout-min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/moment.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="border bx1">
+        <div class="header-logo">
+            <img src="images/top-class-logo.png">
+            <img src="images/mathmountains-logo.png">
+        </div>
+        <!-- header close here -->
+    </div>
+
+
+    <div class="border bx2">
+        <div class="explore-btn">
+            <div class="question-mark" style="height: 50px">
+                <img src="images/question-button.png" style="width: 50px; position: fixed; top:10px; left: 10px;">
+            </div>
+            <!-- mark en-->
+            <div class="explore-img" data-gmode="explore" data-bind="click:setGameMode"><img src="images/explore-button.png"></div>
+            <div class="explore-img" data-gmode="practice" data-bind="click:setGameMode"><img src="images/practice-button.png"></div>
+        </div>
+        <!-- explore btn end-->
+    </div>
+
+
+    <div class="border bx3">
+        <div class="home-button">
+            <div class="question-mark left-float" style="height: 60px;">
+                <img data-bind="click:goHome" src="images/home-button.png" style="position: fixed; top: 10px; left: 10px; width: 50px;">
+            </div>
+            <!--<div class="setting-img right-float" style="position: absolute;"><img src="images/manage-background.png"></div>-->
+            <!-- mark en-->
+            <div class="focus-fact"><span> Focus Fact(s): </span>
+                <ul class="focus-text-list" id="frt">
+                    <li data-bind="click:focusFactsSet(0)"> 0</li>
+                    <li data-bind="click:focusFactsSet(1)"> 1</li>
+                    <li data-bind="click:focusFactsSet(2)"> 2</li>
+                    <li data-bind="click:focusFactsSet(3)"> 3</li>
+                    <li data-bind="click:focusFactsSet(4)"> 4</li>
+                    <li data-bind="click:focusFactsSet(5)"> 5</li>
+                    <li data-bind="click:focusFactsSet(6)"> 6</li>
+                    <li data-bind="click:focusFactsSet(7)"> 7</li>
+                    <li data-bind="click:focusFactsSet(8)"> 8</li>
+                    <li data-bind="click:focusFactsSet(9)"> 9</li>
+                    <li data-bind="click:focusFactsSet(10)"> 10</li>
+                    <li data-bind="click:focusFactsSet(11)"> all</li>
+                </ul>
+                <div class="divider-div"></div>
+                <!--divider nd-->
+            </div>
+            <div class="problems-text focus-fact"><span> # of Problems </span>
+                <ul class="focus-text-list">
+                    <li data-bind="css:{'active-list':maxNumOfQue() == 5},click:maxNumOfQue(5)"> 5</li>
+                    <li data-bind="css:{'active-list':maxNumOfQue() == 10},click:maxNumOfQue(10)"> 10</li>
+                    <li data-bind="css:{'active-list':maxNumOfQue() == 15},click:maxNumOfQue(15)"> 15</li>
+                    <li data-bind="css:{'active-list':maxNumOfQue() == 20},click:maxNumOfQue(20)"> 20</li>
+                    <li data-bind="css:{'active-list':maxNumOfQue() == 25},click:maxNumOfQue(25)"> 25</li>
+                    <li data-bind="css:{'active-list':maxNumOfQue() == 30},click:maxNumOfQue(30)"> 30</li>
+                </ul>
+            </div>
+            <div class="divider-div"></div>
+            <!--divider nd-->
+            <div class="problems-text focus-fact timer"><span> Timer </span>
+                <ul class="focus-text-list">
+                    <li data-bind="css:{'active-list':timerStatus() == false},click:timerStatus(false)"> off</li>
+                    <li data-bind="css:{'active-list':timerStatus},click:timerStatus(true)"> on</li>
+                </ul>
+            </div>
+            <div class="question-mark right-float" style="margin-top: -69px;">
+                <img src="images/start-button.png" style="width: 50px; position: fixed;
+    bottom: 10px;
+    right: 10px;" data-bind="click:gameStart" />
+            </div>
+            <!-- mark en-->
+        </div>
+        <!-- explore btn end-->
+    </div>
+
+
+    <div class="border bx4" data-bind="foreach:que">
+        <h4 style="    color: #fff;
+    position: absolute;
+    right: 49px;
+    font-size: 22pt;">
+            <!-- ko text: $root.currentQue --><!-- /ko -->/<!-- ko text: $root.maxNumOfQue --><!-- /ko -->
+        </h4>
+        <!--<div class="home-btn left-float"><img src="images/home-button.png"></div>-->
+        <!--&lt;!&ndash; mark en&ndash;&gt;-->
+        <!--<div class="rest-btn right-float"><img src="images/reset-button.png"></div>-->
+        <!--&lt;!&ndash; mark en&ndash;&gt;-->
+
+        <!-- ko if: hide() == 'a' -->
+        <div class="triangle-no-selection">
+            <div class="top-text-bg"><input data-bind="value:result" onfocus="blur();" width="10px" /><img src="images/math-mountains-blank-circle.png"></div>
+            <!-- top text bg end-->
+            <div class="left-text-bg"><span data-bind="text:b"> 15 </span><img src="images/math-mountains-selected-circle.png"></div>
+            <!-- top text bg end-->
+            <div class="right-text-bg"><span data-bind="text:c"> 15 </span><img src="images/math-mountains-selected-circle.png"></div>
+            <!-- top text bg end-->
+            <div class="tap-text">
+                <ul class="cal-text key1">
+                    <li data-v="1"> 1</li>
+                    <li data-v="2"> 2</li>
+                    <li data-v="3">3</li>
+                    <div class="divider"></div>
+                    <li data-v="4"> 4</li>
+                    <li data-v="5"> 5</li>
+                    <li data-v="6">6</li>
+                    <div class="divider"></div>
+                    <li data-v="7"> 7</li>
+                    <li data-v="8"> 8</li>
+                    <li data-v="9">9</li>
+                    <div class="divider"></div>
+                    <li data-v="0">0</li>
+                    <li data-v="c" class="color-text">C</li>
+                    <li class="color-text" data-bind="click:go">ENTER</li>
+                </ul>
+            </div>
+        </div>
+        <!-- /ko -->
+        <!-- ko if: hide() == 'b' -->
+        <div class="triangle-no-selection">
+            <div class="top-text-bg"><span data-bind="text:a"> 15 </span><img src="images/math-mountains-selected-circle.png"></div>
+            <!-- top text bg end-->
+            <div class="left-text-bg"><input data-bind="value:result" width="10px" onfocus="blur();" /><img src="images/math-mountains-blank-circle.png"></div>
+            <!-- top text bg end-->
+            <div class="right-text-bg"><span data-bind="text:c"> 15 </span><img src="images/math-mountains-selected-circle.png"></div>
+            <!-- top text bg end-->
+            <div class="tap-text">
+                <ul class="cal-text key1">
+                    <li data-v="1"> 1</li>
+                    <li data-v="2"> 2</li>
+                    <li data-v="3">3</li>
+                    <div class="divider"></div>
+                    <li data-v="4"> 4</li>
+                    <li data-v="5"> 5</li>
+                    <li data-v="6">6</li>
+                    <div class="divider"></div>
+                    <li data-v="7"> 7</li>
+                    <li data-v="8"> 8</li>
+                    <li data-v="9">9</li>
+                    <div class="divider"></div>
+                    <li data-v="0">0</li>
+                    <li data-v="c" class="color-text">C</li>
+                    <li class="color-text" data-bind="click:go">ENTER</li>
+                </ul>
+            </div>
+        </div>
+        <!-- /ko -->
+        <!-- ko if: hide() == 'c' -->
+        <div class="triangle-no-selection">
+            <div class="top-text-bg"><span data-bind="text:a"> 15 </span><img src="images/math-mountains-selected-circle.png"></div>
+            <!-- top text bg end-->
+            <div class="left-text-bg"><span data-bind="text:b"> 15 </span><img src="images/math-mountains-selected-circle.png"></div>
+            <!-- top text bg end-->
+            <div class="right-text-bg"><input data-bind="value:result" width="10px" onfocus="blur();" /><img src="images/math-mountains-blank-circle.png"></div>
+            <!-- top text bg end-->
+            <div class="tap-text">
+                <ul class="cal-text key1">
+                    <li data-v="1"> 1</li>
+                    <li data-v="2"> 2</li>
+                    <li data-v="3">3</li>
+                    <div class="divider"></div>
+                    <li data-v="4"> 4</li>
+                    <li data-v="5"> 5</li>
+                    <li data-v="6">6</li>
+                    <div class="divider"></div>
+                    <li data-v="7"> 7</li>
+                    <li data-v="8"> 8</li>
+                    <li data-v="9">9</li>
+                    <div class="divider"></div>
+                    <li data-v="0">0</li>
+                    <li data-v="c" class="color-text">C</li>
+                    <li class="color-text" data-bind="click:go">ENTER</li>
+                </ul>
+            </div>
+        </div>
+        <!-- /ko -->
+        <!-- triangle end-->
+    </div>
+
+    <div class="border bx5">
+
+        <div style="padding: 4px; text-align: center;">
+            <div style="background: #000; padding: 4px; margin: 0 5px;">
+                <h5 style="color: #ffffff; font-size: 14pt">RESULT</h5>
+            </div>
+            <div style="color: #E4E4E4; font-size: 18pt; margin: 4px 0;">
+            <p>Focus Fact(s):</p>
+            <ul class="jfact" id="frt2">
+                <li> 0</li>
+                <li> 1</li>
+                <li> 2</li>
+                <li> 3</li>
+                <li> 4</li>
+                <li> 5</li>
+                <li> 6</li>
+                <li> 7</li>
+                <li> 8</li>
+                <li> 9</li>
+                <li> 10</li>
+                <li> all</li>
+            </ul>
+            <p>Score: <!-- ko text: score --><!-- /ko --> of <!-- ko text: maxNumOfQue --><!-- /ko --> </p>
+            </div>
+            <table width="100%">
+                <tr>
+                    <td>
+                        <img data-bind="click:goHome" style="height: 50px" src="images/home-button.png">
+                    </td>
+                    <td>
+                        <img data-bind="click:reset" src="images/reset-button.png" style="height: 50px">
+                    </td>
+                    <td>
+                        <img src="images/button-admin.png" style="height: 50px">
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+
+    </div>
+
+    <div class="border bx6" data-bind="foreach:exp">
+        <div class="home-btn left-float" >
+            <img data-bind="click:$root.goHome" src="images/home-button.png">
+        </div>
+        <!-- mark en-->
+        <div class="rest-btn right-float"><img src="images/reset-button.png" data-bind="click:reset"></div>
+        <!-- mark en-->
+
+        <!-- ko if: notActive -->
+        <div class="triangle-no-selection">
+            <div class="top-text-bg"><img src="images/math-mountains-blank-circle.png" data-bind="click:onTap" data-v="a"></div>
+            <!-- top text bg end-->
+            <div class="left-text-bg"><img src="images/math-mountains-blank-circle.png" data-bind="click:onTap" data-v="b"></div>
+            <!-- top text bg end-->
+            <div class="right-text-bg"><img src="images/math-mountains-blank-circle.png" data-bind="click:onTap" data-v="c"></div>
+            <!-- top text bg end-->
+            <div class="tap-text"><img src="images/opening-hint.png"></div>
+        </div>
+        <!-- /ko -->
+
+        <!-- ko if: isActive -->
+        <div class="triangle-no-selection">
+            <div class="top-text-bg">
+                <!-- ko if: hide() != 'a' -->
+                <span data-bind="text:a"> 15 </span>
+                <!-- /ko -->
+                <!-- ko if: hide() == 'a' -->
+                <input data-bind="value:result" width="10px" onfocus="blur();" />
+                <!-- /ko -->
+                <img src="images/math-mountains-selected-circle.png">
+            </div>
+            <!-- top text bg end-->
+            <div class="left-text-bg">
+                <!-- ko if: hide() != 'b' -->
+                <span data-bind="text:b"> 15 </span>
+                <!-- /ko -->
+                <!-- ko if: hide() == 'b' -->
+                <input data-bind="value:result" width="10px" onfocus="blur();" />
+                <!-- /ko -->
+                <img src="images/math-mountains-selected-circle.png">
+            </div>
+            <!-- top text bg end-->
+            <div class="right-text-bg">
+                <!-- ko if: hide() != 'c' -->
+                <span data-bind="text:c"> 15 </span>
+                <!-- /ko -->
+                <!-- ko if: hide() == 'c' -->
+                <input data-bind="value:result" width="10px" onfocus="blur();" />
+                <!-- /ko -->
+                <img src="images/math-mountains-blank-circle.png">
+            </div>
+            <!-- top text bg end-->
+            <div class="tap-text">
+                <ul class="cal-text key2">
+                    <li data-v="1"> 1</li>
+                    <li data-v="2"> 2</li>
+                    <li data-v="3">3</li>
+                    <div class="divider"></div>
+                    <li data-v="4"> 4</li>
+                    <li data-v="5"> 5</li>
+                    <li data-v="6">6</li>
+                    <div class="divider"></div>
+                    <li data-v="7"> 7</li>
+                    <li data-v="8"> 8</li>
+                    <li data-v="9">9</li>
+                    <div class="divider"></div>
+                    <li data-v="0">0</li>
+                    <li data-v="c" class="color-text">C</li>
+                    <li class="color-text" data-bind="click:check">ENTER</li>
+                </ul>
+            </div>
+        </div>
+        <!-- /ko -->
+
+
+        <!-- triangle end-->
+    </div>
+
+</div>
+<script type="text/javascript" src="js/app.js"></script>
+</body>
+</html>

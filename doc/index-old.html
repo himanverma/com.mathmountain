@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="user-scalable=no, initial-scale=0.5, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+    <title></title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic,300' rel='stylesheet'
+          type='text/css'>
+
+    <script src="js/easeljs-0.8.2.min.js"></script>
+    <!--<script src="js/createjs-2015.11.26.min.js"></script>-->
+    <script src="js/knockout-min.js"></script>
+    <script src="js/jquery.min.js"></script>
+
+</head>
+<style type="text/css">
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    html, body
+    {
+        height: 100%;
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    canvas {
+        display: block;
+    }
+</style>
+<body>
+<div id="arena">
+    <div>
+        <span data-bind="text:currentQue"></span> / <span data-bind="text:maxNumOfQue"></span> <br>
+        Score: <span data-bind="text:score"></span>
+    </div>
+    <div data-bind="foreach:que">
+        <div data-bind="if: hide() == 'a'">
+            <input width="10px" data-bind="value:result"> = <span data-bind="text:b"></span> + <span data-bind="text:c"></span>
+        </div>
+        <div data-bind="if: hide() == 'c'">
+            <span data-bind="text:a"></span> = <span data-bind="text:b"></span> + <input width="10px" data-bind="value:result">
+        </div>
+        <div data-bind="if: hide() == 'b'">
+            <span data-bind="text:a"></span> = <input width="10px" data-bind="value:result"> + <span data-bind="text:c"></span>
+        </div>
+        <button data-bind="click:go">NExt</button>
+    </div>
+</div>
+<canvas id="demoCanvas"></canvas>
+<script>
+    (function() {
+        var canvas = document.getElementById('demoCanvas'),
+                context = canvas.getContext('2d');
+
+        // resize the canvas to fill browser window dynamically
+        window.addEventListener('resize', resizeCanvas, false);
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            /**
+             * Your drawings need to be inside this function otherwise they will be reset when
+             * you resize the browser window and the canvas goes will be cleared.
+             */
+            drawStuff();
+        }
+        resizeCanvas();
+
+        function drawStuff() {
+            // do your drawing stuff here
+        }
+    })();
+    var QuesVM = function(range,parent){
+        var me = this;
+        me.getNum = function(range){
+            var min = 0;
+            var max = range.length - 1;
+            var c = Math.floor(Math.random() * (max - min + 1)) + min;
+            return range[c];
+        };
+        me.getRandNum = function(min,max){
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        };
+        me.a = ko.observable();
+        me.b = ko.observable();
+        me.c = ko.observable();
+        me.hide = ko.observable("c");
+        me.result = ko.observable("");
+        me.check = function(){
+            if(me.hide() == 'a')
+                return me.result() == me.a();
+            if(me.hide() == 'b')
+                return me.result() == me.b();
+            if(me.hide() == 'c')
+                return me.result() == me.c();
+        }
+        me.go = function(){
+            alert(me.check() ? "Correct!" : "Incorrect!");
+            parent.next(me.check());
+        }
+        me.init = function (range) {
+            var hide = me.getRandNum(1,3);
+            var c = ["a","b","c"];
+            me.hide(c[hide-1]);
+            me.a(me.getNum(range));
+            me.b(me.getRandNum(1,me.a() - 1));
+            me.c(me.a() - me.b());
+            console.log(me.a() + ", " + me.b() + ", " + me.c());
+
+        };
+        me.init(range);
+    };
+    var MainVM = function(){
+        var me = this;
+        me.getNum = function(min,max){
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        };
+        me.gameMode = ko.observable('practice');
+        me.focusFacts = [13,15,17,18,19,25,24];
+        me.maxNumOfQue = ko.observable(10);
+        me.currentQue = ko.observable(1);
+        me.que = ko.observableArray([]);
+        me.score = ko.observable(0);
+
+        me.stage = new createjs.Stage("demoCanvas");
+        me.circleTP = new createjs.Shape();
+        me.circleBL = new createjs.Shape();
+        me.circleBR = new createjs.Shape();
+        me.next = function(result){
+            if(result)
+                me.score(me.score() + 1);
+            if(me.currentQue() <= me.maxNumOfQue()){
+                me.que.removeAll();
+                me.que.push(new QuesVM(me.focusFacts,me));
+                me.currentQue(me.currentQue() + 1);
+            }
+        }
+        me._init = function(){
+            me.que.push(new QuesVM(me.focusFacts,me));
+//            for(i = 1; i <= me.maxNumOfQue(); i++){
+//                me.list.push(new QuesVM(me.focusFacts));
+//            }
+
+
+
+            var wW = $(window).width();
+            var hH = $(window).height();
+            me.circleTP.graphics.beginFill('DeepSkyBlue').drawCircle(0,0,50);
+            me.circleTP.x = wW/2;
+            me.circleTP.y = 60;
+            me.stage.addChild(me.circleTP);
+
+            me.circleBL.graphics.beginFill('DeepSkyBlue').drawCircle(0,0,50);
+            me.circleBL.x = wW/4;
+            me.circleBL.y = hH - 60;
+            me.stage.addChild(me.circleBL);
+
+            me.circleBR.graphics.beginFill('DeepSkyBlue').drawCircle(0,0,50);
+            me.circleBR.x = wW/4 * 3;
+            me.circleBR.y = hH - 60;
+            me.stage.addChild(me.circleBR);
+
+            me.stage.update();
+        };
+        me._init();
+    };
+//
+    setTimeout(function(){
+//        init();
+        o = new MainVM();
+        ko.applyBindings(o,$('#arena')[0]);
+    },1000);
+</script>
+</body>
+</html>
